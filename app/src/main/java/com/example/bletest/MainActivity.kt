@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(
                         this@MainActivity,
-                        "Beacon detected",
+                        "Beacon detected:$major:$minor",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
