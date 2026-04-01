@@ -5,10 +5,20 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="61dp" />
+
     <Button
         android:id="@+id/bluetooth_check_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Check Bluetooth" />
+
+    <Button
+        android:id="@+id/bluetooth_scan_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Scan Beacon" />
 
 </LinearLayout>

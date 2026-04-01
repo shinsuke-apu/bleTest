@@ -124,19 +124,19 @@ class BleUtil(private val context: Context) {
                             "%016x".format(uuidLow.toLong()) + ", major:" +
                             "%04x".format(major) + " minor:" + "%04x".format(minor) + ", RSSI:" + resultRssi)
                 if (uuidHigh == serviceUuidHigh && uuidLow == serviceUuidLow && resultRssi > thresholdRssi) {
-                    bluetoothLeScanner?.let { stopScanning(it) }
                     beaconDetected = true
                     nowMajor = major
                     nowMinor = minor
                     nowRssi = resultRssi
                     vibUtil.combinedVibration?.let { vibUtil.vibratorManager?.vibrate(it) }
-                    Toast.makeText(
+                    /*Toast.makeText(
                         context,
                         "major: %04x, ".format(nowMajor) +
                                 "minor: %04x, ".format(nowMinor) +
                                 "RSSI: %d".format(nowRssi),
                         Toast.LENGTH_LONG
-                    ).show()
+                    ).show()*/
+                    bluetoothLeScanner?.let { stopScanning(it) }
                 }
             }
         }

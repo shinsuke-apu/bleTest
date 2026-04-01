@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock.sleep
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,8 @@ import com.example.bletest.ui.theme.BleUtil
 class MainActivity : AppCompatActivity() {
 
     private val bleUtil by lazy { BleUtil(this) }
+    var scanThread = Thread()
+    var checkThread = Thread()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -46,12 +49,31 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.bluetooth_check_button).setOnClickListener {
             bleUtil.checkBluetoothAndEnable(requestEnableBtLauncher)
         }
-
-        if (hasPermissions()) {
-            bleUtil.scanLeDevice()
-        } else {
-            requestPermissions()
+        scanThread = Thread {
+            if (hasPermissions()) {
+                bleUtil.scanLeDevice()
+            } else {
+                runOnUiThread {
+                    requestPermissions()
+                }
+            }
         }
+        scanThread.start()
+        checkThread = Thread {
+            while (!bleUtil.beaconDetected) {
+                sleep(100)
+            }
+            runOnUiThread {
+                Toast.makeText(
+                    this,
+                    "major: %04x, ".format(bleUtil.nowMajor) +
+                            "minor: %04x, ".format(bleUtil.nowMinor) +
+                            "RSSI: %d".format(bleUtil.nowRssi),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+        checkThread.start()
     }
 
     private fun hasPermissions(): Boolean {
