@@ -12,10 +12,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.bletest.ui.theme.BleUtil
+import com.example.bletest.ui.theme.VibUtil
 
 class MainActivity : AppCompatActivity() {
 
     private val bleUtil by lazy { BleUtil(this) }
+    private val vibUtil by lazy { VibUtil(this) }
     var scanThread = Thread()
     var checkThread = Thread()
 
@@ -49,31 +51,35 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.bluetooth_check_button).setOnClickListener {
             bleUtil.checkBluetoothAndEnable(requestEnableBtLauncher)
         }
-        scanThread = Thread {
-            if (hasPermissions()) {
-                bleUtil.scanLeDevice()
-            } else {
-                runOnUiThread {
-                    requestPermissions()
+
+        findViewById<Button>(R.id.bluetooth_scan_button).setOnClickListener {
+            scanThread = Thread {
+                if (hasPermissions()) {
+                    bleUtil.scanLeDevice()
+                } else {
+                    runOnUiThread {
+                        requestPermissions()
+                    }
                 }
             }
-        }
-        scanThread.start()
-        checkThread = Thread {
-            while (!bleUtil.beaconDetected) {
-                sleep(100)
+            scanThread.start()
+            checkThread = Thread {
+                while (!bleUtil.beaconDetected) {
+                    sleep(100)
+                }
+                runOnUiThread {
+                    vibUtil.combinedVibration?.let { vibUtil.vibratorManager?.vibrate(it) }
+                    Toast.makeText(
+                        this,
+                        "major: %04x, ".format(bleUtil.nowMajor) +
+                                "minor: %04x, ".format(bleUtil.nowMinor) +
+                                "RSSI: %d".format(bleUtil.nowRssi),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-            runOnUiThread {
-                Toast.makeText(
-                    this,
-                    "major: %04x, ".format(bleUtil.nowMajor) +
-                            "minor: %04x, ".format(bleUtil.nowMinor) +
-                            "RSSI: %d".format(bleUtil.nowRssi),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            checkThread.start()
         }
-        checkThread.start()
     }
 
     private fun hasPermissions(): Boolean {

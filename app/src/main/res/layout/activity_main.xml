@@ -7,18 +7,18 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="61dp" />
+        android:layout_height="181dp" />
 
     <Button
         android:id="@+id/bluetooth_check_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check Bluetooth" />
+        android:text="@string/check_bluetooth" />
 
     <Button
         android:id="@+id/bluetooth_scan_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Scan Beacon" />
+        android:text="@string/start_scan_beacon" />
 
 </LinearLayout>

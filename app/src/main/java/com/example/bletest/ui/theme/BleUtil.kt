@@ -19,8 +19,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import com.example.bletest.MainActivity
-import com.example.bletest.ui.theme.VibUtil
 
 class BleUtil(private val context: Context) {
     private val vibUtil by lazy { VibUtil(context) }
@@ -58,6 +56,8 @@ class BleUtil(private val context: Context) {
         if (!adapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             launcher.launch(enableBtIntent)
+        } else {
+            Toast.makeText(context, "Bluetooth is already enabled", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -128,14 +128,7 @@ class BleUtil(private val context: Context) {
                     nowMajor = major
                     nowMinor = minor
                     nowRssi = resultRssi
-                    vibUtil.combinedVibration?.let { vibUtil.vibratorManager?.vibrate(it) }
-                    /*Toast.makeText(
-                        context,
-                        "major: %04x, ".format(nowMajor) +
-                                "minor: %04x, ".format(nowMinor) +
-                                "RSSI: %d".format(nowRssi),
-                        Toast.LENGTH_LONG
-                    ).show()*/
+
                     bluetoothLeScanner?.let { stopScanning(it) }
                 }
             }
